@@ -22,20 +22,19 @@ export default {
     queue(gameType) {
       if (this.stompClient && this.stompClient.connected) {
         const msg = { gameType };
-        this.stompClient.send("/game/queue", JSON.stringify(msg), {});
+        this.stompClient.send("/app/game/queue/start", {}, JSON.stringify(msg));
       }
     }
   },
   mounted() {
-    this.socket = new SockJS("http://localhost:8080/greeting");
+    this.socket = new SockJS("http://localhost:8080/ws");
     this.stompClient = Stomp.over(this.socket);
     this.stompClient.connect(
       {},
       frame => {
         this.connected = true;
 
-        console.log("subscribing");
-        this.stompClient.subscribe("/queue/status", tick => {
+        this.stompClient.subscribe("/user/game/queue/status", tick => {
           console.log(tick);
         });
 
