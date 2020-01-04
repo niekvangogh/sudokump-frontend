@@ -13,6 +13,9 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    ],
+    script: [
+      { src: 'https://apis.google.com/js/api:client.js' }
     ]
   },
   /*
@@ -28,6 +31,9 @@ export default {
   ** Plugins to load before mounting the App
   */
   plugins: [
+    { ssr: false, src: '~plugins/hello' },
+    { src: '~plugins/google'}
+
   ],
   /*
   ** Nuxt.js dev-modules
@@ -58,7 +64,7 @@ export default {
     /*
     ** You can extend webpack config here
     */
-    extend (config, ctx) {
+    extend(config, ctx) {
     }
   }
 }

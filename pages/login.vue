@@ -6,42 +6,11 @@
           <h4 class="card-title text-center mb-4 mt-1">Login</h4>
           <hr />
           <b-alert variant="danger" v-if="error">{{error}}</b-alert>
-          <form @submit="login">
-            <div class="form-group">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">
-                    <i class="fa fa-user"></i>
-                  </span>
-                </div>
-                <input
-                  v-model="username"
-                  name
-                  class="form-control"
-                  placeholder="Email"
-                  type="email"
-                />
-              </div>
-            </div>
-            <div class="form-group">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text">
-                    <i class="fa fa-lock"></i>
-                  </span>
-                </div>
-                <input
-                  v-model="password"
-                  class="form-control"
-                  placeholder="Password"
-                  type="password"
-                />
-              </div>
-            </div>
-            <div class="form-group">
-              <button type="submit" class="btn btn-primary btn-block">Login</button>
-            </div>
-          </form>
+          <g-signin-button
+            :params="googleSignInParams"
+            @success="onSignInSuccess"
+            @error="onSignInError"
+          >Sign in with Google</g-signin-button>
         </article>
       </div>
     </b-row>
@@ -53,21 +22,29 @@ export default {
     return {
       username: "",
       password: "",
-      error: null
+      error: null,
+      googleSignInParams: {
+        client_id:
+          "1052949725832-4cbeegr988optkd2a6j7bstr25g9oon3.apps.googleusercontent.com"
+      }
     };
   },
   methods: {
-    login(event) {
-      event.preventDefault();
-      
-      let username = this.username;
-      let password = this.password;
+    onSignInSuccess(googleUser) {
+      // `googleUser` is the GoogleUser object that represents the just-signed-in user.
+      // See https://developers.google.com/identity/sign-in/web/reference#users
+      const profile = googleUser.getBasicProfile(); // etc etc
+      console.log(googleUser)
 
       if (true) {
         this.$router.push({ name: "dashboard", params: { profile: {} } });
       } else {
         this.error = "Incorrect username or password";
       }
+    },
+    onSignInError(error) {
+      // `error` contains any error occurred.
+      console.log("OH NOES", error);
     }
   }
 };
