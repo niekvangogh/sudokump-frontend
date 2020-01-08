@@ -4,7 +4,7 @@
       <b-col>
         <h2>
           Dashboard
-          <small class="text-muted">Hey {{'Niek'}}</small>
+          <small class="text-muted">Hey {{user.name}}</small>
         </h2>
       </b-col>
     </b-row>
@@ -27,22 +27,30 @@
       <b-col cols="6">
         <h5>Play a new game</h5>
         <div>
-          <b-button variant="success" :to="{name: 'game-queue', params: { type: 'quickplay' }}">Quickplay</b-button>
+          <b-button
+            variant="success"
+            :to="{name: 'game-queue', params: { type: 'quickplay' }}"
+          >Quickplay</b-button>
           <b-button variant="info" :to="{name: 'game-queue', params: { type: 'ranked' }}">Ranked</b-button>
         </div>
       </b-col>
       <b-col>
-          <div class="lobbies">
-              insert lobbies
-          </div>
+        <div class="lobbies">insert lobbies</div>
       </b-col>
     </b-row>
   </b-container>
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
-    middleware: 'authenticated'
+  middleware: "authenticated",
+  computed: {
+    ...mapGetters([
+      "user",
+    ])
+  }
 };
 </script>
 

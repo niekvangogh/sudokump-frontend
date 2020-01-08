@@ -1,4 +1,7 @@
 const cookieparser = process.server ? require('cookieparser') : undefined
+import Vue from 'vue';
+import axios from 'axios';
+
 
 export const state = () => {
   return {
@@ -15,21 +18,25 @@ export const mutations = {
 }
 
 export const actions = {
-  nuxtServerInit({ commit }, { req }) {
-    let auth = null;
+  nuxtServerInit({ commit, dispatch }, { req }) {
+    let auth = {};
     if (req.headers.cookie) {
       const parsed = cookieparser.parse(req.headers.cookie)
-      console.log(parsed);
       try {
         auth = JSON.parse(parsed.auth);
+        dispatch('setAuth', auth);
       } catch (err) {
 
       }
     }
+  }, setAuth({ commit, state }, auth) {
+    this.$api.defaults.headers.common["Authorization"] = `Bearer ${auth.accessToken}`;
     commit('setAuth', auth)
+
   }
 }
 
 export const getters = {
-  user: (state) => state.user
+  user: (state) => state.user,
+  accessToken: (state) => state.accessToken
 }

@@ -28,6 +28,7 @@
 </template>
 <script>
 import Axios from "axios";
+
 const Cookie = process.client ? require("js-cookie") : undefined;
 
 export default {
@@ -58,13 +59,17 @@ export default {
 
             this.$api.get("/user/me").then(response => {
               const userProfile = response.data;
+
               Cookie.set(
                 "auth",
                 JSON.stringify({ accessToken, user: userProfile })
               );
 
-              this.$store.commit("setAuth", { accessToken, user: userProfile });
-              
+              this.$store.dispatch("setAuth", {
+                accessToken,
+                user: userProfile
+              });
+
               this.$router.push({ name: "dashboard" });
             });
           }
