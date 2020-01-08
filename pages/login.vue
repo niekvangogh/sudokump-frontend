@@ -6,45 +6,69 @@
           <h4 class="card-title text-center mb-4 mt-1">Login</h4>
           <hr />
           <b-alert variant="danger" v-if="error">{{error}}</b-alert>
-          <g-signin-button
-            :params="googleSignInParams"
-            @success="onSignInSuccess"
-            @error="onSignInError"
-          >Sign in with Google</g-signin-button>
+          <div>
+            <b-form @submit.prevent="login">
+              <b-form-input
+                id="input-1"
+                v-model="username"
+                type="text"
+                required
+                placeholder="Username"
+              ></b-form-input>
+              <br />
+              <b-form-input type="password" v-model="password" required placeholder="Password"></b-form-input>
+              <br />
+              <b-button type="submit" variant="primary">Login</b-button>
+            </b-form>
+          </div>
         </article>
       </div>
     </b-row>
   </b-container>
 </template>
 <script>
+import Axios from "axios";
+const Cookie = process.client ? require("js-cookie") : undefined;
+
 export default {
+  middleware: "notAuthenticated",
   data() {
     return {
       username: "",
       password: "",
-      error: null,
-      googleSignInParams: {
-        client_id:
-          "1052949725832-4cbeegr988optkd2a6j7bstr25g9oon3.apps.googleusercontent.com"
-      }
+      error: ""
     };
   },
   methods: {
-    onSignInSuccess(googleUser) {
-      // `googleUser` is the GoogleUser object that represents the just-signed-in user.
-      // See https://developers.google.com/identity/sign-in/web/reference#users
-      const profile = googleUser.getBasicProfile(); // etc etc
-      console.log(googleUser)
+    login(e) {
+      const email = this.username;
+      const password = this.password;
+      this.$api
+        .post("/auth/login", {
+          email,
+          password
+        })
+        .then(response => {
+          let data = response.data;
+          if (data) {
+            const accessToken = data.accessToken;
+            this.$api.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${accessToken}`;
 
-      if (true) {
-        this.$router.push({ name: "dashboard", params: { profile: {} } });
-      } else {
-        this.error = "Incorrect username or password";
-      }
-    },
-    onSignInError(error) {
-      // `error` contains any error occurred.
-      console.log("OH NOES", error);
+            this.$api.get("/user/me").then(response => {
+              const userProfile = response.data;
+              Cookie.set(
+                "auth",
+                JSON.stringify({ accessToken, user: userProfile })
+              );
+
+              this.$store.commit("setAuth", { accessToken, user: userProfile });
+              
+              this.$router.push({ name: "dashboard" });
+            });
+          }
+        });
     }
   }
 };

@@ -3,7 +3,11 @@
     <div v-if="!connected">
       <span>Connecting to game servers</span>
     </div>
-    <div v-else></div>
+    <div v-else>
+
+
+      
+    </div>
   </div>
 </template>
 
