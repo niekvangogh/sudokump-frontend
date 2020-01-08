@@ -1,43 +1,46 @@
 <template>
-  <div class="sudoku">
-    <div class="sudoku__row" v-for="rowIndex in squirt" :key="rowIndex">
-      <sudoku-box
-        v-for="boxIndex in squirt"
-        :key="boxIndex"
-        :size="size"
-        :box-x="rowIndex"
-        :box-y="boxIndex"
-      />
+  <div class="sudoku" v-if="$sudokuManager.grid">
+    <div class="sudoku__row" v-for="x in $sudokuManager.grid.length" :key="x">
+      <div v-for="y in $sudokuManager.grid.length" :key="y">
+        <sudoku-tile
+          :x="x -1"
+          :y="y -1"
+          :value="$sudokuManager.grid[x - 1][y - 1]"
+          @select="setSelected"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import SudokuBox from "./sudoku-box.vue";
+import SudokuTile from "./sudoku-tile.vue";
 
 export default {
   components: {
-    SudokuBox
+    SudokuTile
   },
   data() {
     return {
-      size: 9
+      selected: null
     };
   },
-  computed: {
-    squirt() {
-      return Math.sqrt(this.size);
-    }
-  },
+  computed: {},
   mounted() {
-    window.addEventListener("keydown", function(e) {
-      console.log(e.keyCode);
+    document.addEventListener("keydown", event => {
+      const key = event.key;
+      if (parseInt(key)) {
+        this.$sudokuManager.grid[this.selected.x][this.selected.y] = key;
+        console.log("changing at", this.selected.x, this.selected.y)
+        this.$forceUpdate();
+      }
     });
-
-    this.$sudokuManager.$on("activate", payload => {
-      let x = payload.x;
-      let y = payload.y;
-    });
+  },
+  methods: {
+    setSelected(position) {
+      this.selected = position;
+      console.log(this.$sudokuManager);
+    }
   }
 };
 </script>
@@ -45,7 +48,6 @@ export default {
 <style lang="scss">
 .sudoku {
   &__row {
-    clear: both;
     float: left;
   }
 }

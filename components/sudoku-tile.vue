@@ -1,29 +1,22 @@
 <template>
-  <div class="sudoku__tile">
-    <span class="value" @click="setActive">{{value}}</span>
-  </div>
+  <div class="sudoku__tile" @click="select">{{value}}</div>
 </template>
 
 <script>
 export default {
-  props: ["solution", "x", "y"],
+  props: ["solution", "x", "y", "value"],
   data() {
-    return {
-      value: 0,
-      edit: false
-    };
+    return {};
   },
   methods: {
-    setActive(event) {
-      this.$sudokuManager.$emit("activate", { x: this.x, y: this.y });
+    select(event) {
+      this.$emit("select", { x: this.x, y: this.y });
     }
   }
 };
 </script>
 <style lang="scss">
 div.sudoku__tile {
-  float: left;
-
   height: 50px;
   width: 50px;
   border: 1px solid black;
@@ -36,6 +29,10 @@ div.sudoku__tile {
   .value {
     margin: auto;
     display: block;
+  }
+
+  &.selected {
+    background: green;
   }
 }
 </style>
