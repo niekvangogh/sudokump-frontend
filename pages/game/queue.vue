@@ -3,7 +3,9 @@
     <div v-if="!connected">
       <span>Connecting to game servers</span>
     </div>
-    <div v-else></div>
+    <div v-else>
+      <sudoku />
+    </div>
   </div>
 </template>
 
@@ -11,6 +13,7 @@
 import SockJS from "sockjs-client";
 import Stomp from "webstomp-client";
 import { mapGetters } from "vuex";
+import Sudoku from "~/components/sudoku.vue";
 
 export default {
   data() {
@@ -18,6 +21,9 @@ export default {
       connected: false,
       queueType: this.$route.params.type
     };
+  },
+  components: {
+    Sudoku
   },
   methods: {
     queue(gameType) {
@@ -29,7 +35,7 @@ export default {
   },
   mounted() {
     const accessToken = this.$store.getters.accessToken;
-    
+
     XMLHttpRequest.prototype.origOpen = XMLHttpRequest.prototype.open;
     XMLHttpRequest.prototype.open = function() {
       this.origOpen.apply(this, arguments);
@@ -37,11 +43,11 @@ export default {
     };
 
     this.socket = new SockJS("http://localhost:8080/ws");
-    
+
     this.stompClient = Stomp.over(this.socket);
     this.stompClient.connect(
       {
-        "Authorization": `Bearer ${accessToken}`
+        Authorization: `Bearer ${accessToken}`
       },
       frame => {
         this.connected = true;
