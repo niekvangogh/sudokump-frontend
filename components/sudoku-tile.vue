@@ -10,7 +10,7 @@ export default {
   },
   methods: {
     select(event) {
-      this.$emit("select", { x: this.x, y: this.y });
+      this.$emit("select", { x: this.x, y: this.y, element: this.$el });
     }
   }
 };

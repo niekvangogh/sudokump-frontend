@@ -31,15 +31,20 @@ export default {
       const key = event.key;
       if (parseInt(key)) {
         this.$sudokuManager.grid[this.selected.x][this.selected.y] = key;
-        console.log("changing at", this.selected.x, this.selected.y)
         this.$forceUpdate();
+
+        this.selected.element.classList.remove("selected");
+        this.selected = null;
       }
     });
   },
   methods: {
-    setSelected(position) {
-      this.selected = position;
-      console.log(this.$sudokuManager);
+    setSelected(payload) {
+      if (this.selected) {
+        this.selected.element.classList.remove("selected");
+      }
+      this.selected = payload;
+      this.selected.element.classList.add("selected");
     }
   }
 };
