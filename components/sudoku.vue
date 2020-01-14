@@ -18,12 +18,12 @@
     <tbody class="sudoku__row" v-for="boxIndex in squirt" :key="boxIndex">
       <tr v-for="tileRowIndex in squirt" :key="tileRowIndex">
         <sudoku-tile
-          :x="x - 1"
-          :y="((boxIndex - 1) * squirt) + (tileRowIndex -1)"
-          :value="$sudokuManager.grid[x - 1][((boxIndex - 1) * squirt) + (tileRowIndex -1)]"
           @select="setSelected"
           v-for="x in $sudokuManager.grid.length"
           :key="x"
+          :x="x - 1"
+          :y="((boxIndex - 1) * squirt) + (tileRowIndex -1)"
+          :value="$sudokuManager.grid[x - 1][((boxIndex - 1) * squirt) + (tileRowIndex -1)]"
         />
       </tr>
     </tbody>
@@ -40,7 +40,7 @@ export default {
   data() {
     return {
       selected: null,
-      squirt: Math.sqrt(this.$sudokuManager.grid.length) -1
+      squirt: Math.sqrt(this.$sudokuManager.grid.length)
     };
   },
   computed: {},
