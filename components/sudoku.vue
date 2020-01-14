@@ -1,16 +1,33 @@
 <template>
-  <div class="sudoku" v-if="$sudokuManager.grid">
-    <div class="sudoku__row" v-for="x in $sudokuManager.grid.length" :key="x">
-      <div v-for="y in $sudokuManager.grid.length" :key="y">
+  <table class="sudoku" v-if="$sudokuManager.grid">
+    <colgroup>
+      <col />
+      <col />
+      <col />
+    </colgroup>
+    <colgroup>
+      <col />
+      <col />
+      <col />
+    </colgroup>
+    <colgroup>
+      <col />
+      <col />
+      <col />
+    </colgroup>
+    <tbody class="sudoku__row" v-for="boxIndex in squirt" :key="boxIndex">
+      <tr v-for="tileRowIndex in squirt" :key="tileRowIndex">
         <sudoku-tile
-          :x="x -1"
-          :y="y -1"
-          :value="$sudokuManager.grid[x - 1][y - 1]"
+          :x="x - 1"
+          :y="((boxIndex - 1) * squirt) + (tileRowIndex -1)"
+          :value="$sudokuManager.grid[x - 1][((boxIndex - 1) * squirt) + (tileRowIndex -1)]"
           @select="setSelected"
+          v-for="x in $sudokuManager.grid.length"
+          :key="x"
         />
-      </div>
-    </div>
-  </div>
+      </tr>
+    </tbody>
+  </table>
 </template>
 
 <script>
@@ -22,14 +39,15 @@ export default {
   },
   data() {
     return {
-      selected: null
+      selected: null,
+      squirt: Math.sqrt(this.$sudokuManager.grid.length) -1
     };
   },
   computed: {},
   mounted() {
     document.addEventListener("keydown", event => {
       const key = event.key;
-      if (parseInt(key)) {
+      if (parseInt(key) && this.selected) {
         this.$sudokuManager.grid[this.selected.x][this.selected.y] = key;
         this.$forceUpdate();
 
@@ -51,9 +69,12 @@ export default {
 </script>
 
 <style lang="scss">
-.sudoku {
-  &__row {
-    float: left;
-  }
+table {
+  border-collapse: collapse;
+  font-family: Calibri, sans-serif;
+}
+colgroup,
+tbody {
+  border: solid medium;
 }
 </style>

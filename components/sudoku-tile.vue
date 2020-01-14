@@ -1,5 +1,5 @@
 <template>
-  <div class="sudoku__tile" @click="select">{{value}}</div>
+  <td class="sudoku__tile" @click="select">{{value == 0 ? '' : value}}</td>
 </template>
 
 <script>
@@ -16,15 +16,12 @@ export default {
 };
 </script>
 <style lang="scss">
-div.sudoku__tile {
+td.sudoku__tile {
+  border: solid thin;
   height: 50px;
   width: 50px;
-  border: 1px solid black;
-  border-collapse: collapse;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  text-align: center;
+  padding: 0;
 
   .value {
     margin: auto;
