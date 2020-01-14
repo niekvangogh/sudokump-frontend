@@ -37,6 +37,7 @@ export default {
   components: {
     SudokuTile
   },
+  props: ["grid"],
   data() {
     return {
       selected: null,
@@ -45,6 +46,9 @@ export default {
   },
   computed: {},
   mounted() {
+    this.$sudokuManager.grid = this.grid;
+    this.$forceUpdate();
+
     document.addEventListener("keydown", event => {
       const key = event.key;
       if (parseInt(key) && this.selected) {
