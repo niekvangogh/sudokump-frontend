@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex justify-content-center mt-5">
-    <sudoku v-if="grid" :grid="grid" />
+    <sudoku v-if="grid" :grid="grid" @updateGuess="updateGuess" />
   </div>
 </template>
 
@@ -30,6 +30,17 @@ export default {
     // }
   },
   methods: {
+    updateGuess(payload) {
+      this.$socketManager.stompClient.send(
+        "/app/game/sudoku/setGuess",
+        {},
+        {
+          x: payload.x,
+          y: payload.y,
+          guess: payload.newValue
+        }
+      );
+    },
     setReady() {
       this.$socketManager.stompClient.subscribe(
         "/user/game/sudoku/start",
@@ -40,7 +51,7 @@ export default {
               .get("/game/sudoku", { params: { gameId: this.gameId } })
               .then(response => {
                 const data = response.data;
-                
+
                 var grid = [];
                 data.forEach((rowData, rowIndex) => {
                   grid.push([]);

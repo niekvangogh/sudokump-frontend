@@ -48,6 +48,12 @@ export default {
       if (parseInt(key) && this.selected) {
         this.grid[this.selected.x][this.selected.y].guess = key;
 
+        this.$emit("updateGuess", {
+          x: this.selected.x,
+          y: this.selected.y,
+          newValue: key
+        });
+
         this.selected.element.classList.remove("selected");
         this.selected = null;
       }
