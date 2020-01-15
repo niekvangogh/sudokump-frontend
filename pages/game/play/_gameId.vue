@@ -22,7 +22,7 @@ export default {
     //   this.$socketManager.stompClient &&
     //   this.$socketManager.stompClient.connected
     // ) {
-      this.setReady();
+    this.setReady();
     // } else {
     //   this.$socketManager.connect(stompClient => {
     //     this.setReady();
@@ -39,7 +39,24 @@ export default {
             this.$api
               .get("/game/sudoku", { params: { gameId: this.gameId } })
               .then(response => {
-                this.grid = response.data;
+                const data = response.data;
+                
+                var grid = [];
+                data.forEach((rowData, rowIndex) => {
+                  grid.push([]);
+
+                  rowData.forEach((tileData, colIndex) => {
+                    grid[tileData.xpos][tileData.ypos] = {
+                      solution: tileData.solution,
+                      guess: tileData.guess,
+                      potentialSolutions: tileData.potentialSolutions,
+                      xpos: tileData.xpos,
+                      ypos: tileData.ypos
+                    };
+                  });
+                });
+
+                this.grid = grid;
               });
           }
         }

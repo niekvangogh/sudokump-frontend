@@ -1,5 +1,5 @@
 <template>
-  <table class="sudoku" v-if="$sudokuManager.grid">
+  <table class="sudoku" v-if="grid">
     <colgroup>
       <col />
       <col />
@@ -15,17 +15,13 @@
       <col />
       <col />
     </colgroup>
-    <tbody class="sudoku__row" v-for="boxIndex in squirt" :key="boxIndex">
-      <tr v-for="tileRowIndex in squirt" :key="tileRowIndex">
+    <tbody class="sudoku__row" v-for="(boxRow, boxIndex) in squirt" :key="boxIndex">
+      <tr v-for="(tileRow, tileRowIndex) in squirt" :key="tileRowIndex">
         <sudoku-tile
           @select="setSelected"
-          v-for="x in $sudokuManager.grid.length"
-          :key="x"
-          :x="x - 1"
-          :y="((boxIndex - 1) * squirt) + (tileRowIndex -1)"
-          :value="$sudokuManager.grid[x - 1][((boxIndex - 1) * squirt) + (tileRowIndex -1)].value"
-          :solution="$sudokuManager.grid[x - 1][((boxIndex - 1) * squirt) + (tileRowIndex -1)].solution"
-          :guesses="$sudokuManager.grid[x - 1][((boxIndex - 1) * squirt) + (tileRowIndex -1)].guesses"
+          v-for="(x, xIndex) in grid.length"
+          :key="xIndex + ',' + (boxIndex * squirt) + tileRowIndex"
+          :tileData="grid[xIndex][(boxIndex * squirt) + tileRowIndex]"
         />
       </tr>
     </tbody>
@@ -42,20 +38,15 @@ export default {
   props: ["grid"],
   data() {
     return {
-      selected: null,
-      squirt: Math.sqrt(this.$sudokuManager.grid.length)
+      selected: null
     };
   },
   computed: {},
   mounted() {
-    this.$sudokuManager.grid = this.grid;
-    this.$forceUpdate();
-
     document.addEventListener("keydown", event => {
       const key = event.key;
       if (parseInt(key) && this.selected) {
-        this.$sudokuManager.grid[this.selected.x][this.selected.y].value = key;
-        this.$forceUpdate();
+        this.grid[this.selected.x][this.selected.y].guess = key;
 
         this.selected.element.classList.remove("selected");
         this.selected = null;
@@ -71,9 +62,15 @@ export default {
       this.selected.element.classList.add("selected");
     }
   },
+  computed: {
+    squirt() {
+      return Math.sqrt(this.grid.length);
+    }
+  },
   watch: {
-    grid: function(to) {
-      this.$sudokuManager.grid = this.grid;
+    grid: function(newValue) {
+      console.log(newValue);
+
       this.$forceUpdate();
     }
   }

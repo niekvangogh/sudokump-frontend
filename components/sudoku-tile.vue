@@ -1,30 +1,36 @@
 <template>
-  <td class="sudoku__tile" :style="tileStyle" @click="select">{{value == 0 ? '' : value}}</td>
+  <td class="sudoku__tile" :style="tileStyle" @click="select">{{getTileDisplay(tileData)}}</td>
 </template>
 
 <script>
 export default {
-  props: ["x", "y", "value", "solution"],
+  props: ["tileData"],
   data() {
-    return {
-      
-    };
+    return {};
   },
   methods: {
     select(event) {
-      this.$emit("select", { x: this.x, y: this.y, element: this.$el });
+      this.$emit("select", {
+        x: this.tileData.xpos,
+        y: this.tileData.ypos,
+        element: this.$el
+      });
+    },
+    getTileDisplay(tileData) {
+      if (tileData.solution !== 0) {
+        return tileData.solution;
+      } else if (tileData.guess !== 0) {
+        return tileData.guess;
+      }
     }
   },
-  mounted() {
-    if (this.value != 0) {
-      this.solution = value;
-    }
-  },
+  mounted() {},
   computed: {
     tileStyle() {
-      if (this.solution) {
+      if (this.tileData.solution) {
         return {
-          fontWeight: "bold"
+          fontWeight: "bold",
+          background: "lightgray"
         };
       }
     }
