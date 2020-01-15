@@ -43,19 +43,27 @@ export default {
   },
   computed: {},
   mounted() {
+    var map = {}; // You could also use an array
+    onkeydown = onkeyup = function(e) {
+      e = e || event; // to deal with IE
+      map[e.keyCode] = e.type == "keydown";
+      if(map[16]) {}
+    };
     document.addEventListener("keydown", event => {
       const key = event.key;
       if (parseInt(key) && this.selected) {
         this.grid[this.selected.x][this.selected.y].guess = key;
 
-        this.$emit("updateGuess", {
-          x: this.selected.x,
-          y: this.selected.y,
-          newValue: key
-        });
+        if (true) {
+          this.$emit("updateGuess", {
+            x: this.selected.x,
+            y: this.selected.y,
+            newValue: key
+          });
 
-        this.selected.element.classList.remove("selected");
-        this.selected = null;
+          this.selected.element.classList.remove("selected");
+          this.selected = null;
+        }
       }
     });
   },

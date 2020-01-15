@@ -33,12 +33,12 @@ export default {
     updateGuess(payload) {
       this.$socketManager.stompClient.send(
         "/app/game/sudoku/setGuess",
-        {},
-        {
+        JSON.stringify({
           x: payload.x,
           y: payload.y,
           guess: payload.newValue
-        }
+        }),
+        {}
       );
     },
     setReady() {
