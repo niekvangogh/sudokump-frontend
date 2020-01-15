@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import socketMixin from "../../components/mixins/socket.mixin";
+import { socketMixin } from "../../components/mixins/socket.mixin";
 
 export default {
   mixins: [socketMixin],
@@ -34,29 +34,27 @@ export default {
     // }
   },
   mounted() {
-    this.connect(stompClient => {
-      this.connected = true;
-
-      stompClient.subscribe("/user/game/queue/status", tick => {
-        const gameDetails = JSON.parse(tick.body);
-        this.gameDetails = gameDetails;
-        setTimeout(() => {
-          this.$router.push({
-            name: "game-play-gameId",
-            params: {
-              gameId: this.gameDetails.gameId,
-              stomp: stompClient
-            }
-          });
-        }, 5000);
-      });
-
-      setTimeout(() => {
-        var gameType = "quickplay";
-        const msg = { gameType };
-        this.stompClient.send("/app/game/queue/start", {}, JSON.stringify(msg));
-      }, 1500);
-    });
+    // this.connect(stompClient => {
+      // this.connected = true;
+      // stompClient.subscribe("/user/game/queue/status", tick => {
+      //   const gameDetails = JSON.parse(tick.body);
+      //   this.gameDetails = gameDetails;
+      //   setTimeout(() => {
+      //     this.$router.push({
+      //       name: "game-play-gameId",
+      //       params: {
+      //         gameId: this.gameDetails.gameId,
+      //         stomp: stompClient
+      //       }
+      //     });
+      //   }, 5000);
+      // });
+      // setTimeout(() => {
+      //   var gameType = "quickplay";
+      //   const msg = { gameType };
+      //   this.stompClient.send("/app/game/queue/start", {}, JSON.stringify(msg));
+      // }, 1500);
+    // });
   }
 };
 </script>
