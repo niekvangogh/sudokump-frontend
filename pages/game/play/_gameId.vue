@@ -6,11 +6,10 @@
 </template>
 
 <script>
-import SockJS from "sockjs-client";
-import Stomp from "webstomp-client";
 import Sudoku from "../../../components/sudoku.vue";
 
 export default {
+  mixins: [socketMixin],
   components: {
     Sudoku
   },
@@ -24,6 +23,8 @@ export default {
   mounted() {
     if (this.stomp && this.stomp.connected) {
       this.setReady();
+    } else {
+      this.connect();
     }
   },
   methods: {

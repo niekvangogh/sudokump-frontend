@@ -12,11 +12,10 @@
 </template>
 
 <script>
-import SockJS from "sockjs-client";
-import Stomp from "webstomp-client";
-import { mapGetters } from "vuex";
+import socketMixin from "../../components/mixins/socket.mixin";
 
 export default {
+  mixins: [socketMixin],
   data() {
     return {
       connected: false,
@@ -27,54 +26,37 @@ export default {
   },
   components: {},
   methods: {
-    queue(gameType) {
-      if (this.stompClient && this.stompClient.connected) {
-        const msg = { gameType };
-        this.stompClient.send("/app/game/queue/start", {}, JSON.stringify(msg));
-      }
-    }
+    // queue(gameType) {
+    //   if (this.stompClient && this.stompClient.connected) {
+    //     const msg = { gameType };
+    //     this.stompClient.send("/app/game/queue/start", {}, JSON.stringify(msg));
+    //   }
+    // }
   },
   mounted() {
-    const accessToken = this.$store.getters.accessToken;
+    this.connect(stompClient => {
+      this.connected = true;
 
-    XMLHttpRequest.prototype.origOpen = XMLHttpRequest.prototype.open;
-    XMLHttpRequest.prototype.open = function() {
-      this.origOpen.apply(this, arguments);
-      this.setRequestHeader("Authorization", `Bearer ${accessToken}`);
-    };
-
-    this.socket = new SockJS("http://localhost:8080/ws");
-
-    this.stompClient = Stomp.over(this.socket);
-    this.stompClient.connect(
-      {
-        Authorization: `Bearer ${accessToken}`
-      },
-      frame => {
-        this.connected = true;
-
-        this.stompClient.subscribe("/user/game/queue/status", tick => {
-          this.gameDetails = JSON.parse(tick.body);
-
-          setTimeout(() => {
-            this.$router.push({
-              name: "game-play-gameId",
-              params: {
-                gameId: this.gameDetails.gameId,
-                stomp: this.stompClient
-              }
-            });
-          }, 5000);
-        });
-
+      stompClient.subscribe("/user/game/queue/status", tick => {
+        const gameDetails = JSON.parse(tick.body);
+        this.gameDetails = gameDetails;
         setTimeout(() => {
-          this.queue("test");
-        }, 1500);
-      },
-      error => {
-        this.connected = false;
-      }
-    );
+          this.$router.push({
+            name: "game-play-gameId",
+            params: {
+              gameId: this.gameDetails.gameId,
+              stomp: stompClient
+            }
+          });
+        }, 5000);
+      });
+
+      setTimeout(() => {
+        var gameType = "quickplay";
+        const msg = { gameType };
+        this.stompClient.send("/app/game/queue/start", {}, JSON.stringify(msg));
+      }, 1500);
+    });
   }
 };
 </script>
