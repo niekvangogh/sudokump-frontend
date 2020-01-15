@@ -31,7 +31,8 @@ export default {
   */
   plugins: [
     { src: '~plugins/axios' },
-    { src: '~plugins/sudoku-manager' }
+    { src: '~plugins/sudoku-manager' },
+    { src: '~plugins/socket.manager' }
 
   ],
   /*

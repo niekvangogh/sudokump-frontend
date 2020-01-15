@@ -9,38 +9,45 @@
 import Sudoku from "../../../components/sudoku.vue";
 
 export default {
-  mixins: [socketMixin],
   components: {
     Sudoku
   },
   data() {
     return {
       gameId: this.$route.params.gameId,
-      stomp: this.$route.params.stomp,
       grid: null
     };
   },
   mounted() {
-    if (this.stomp && this.stomp.connected) {
+    // if (this.$socketManager.connected) {
       this.setReady();
-    } else {
-      this.connect();
-    }
+    // } else {
+    //   this.$socketManager.connect(stompClient => {
+    //     this.setReady();
+    //   });
+    // }
   },
   methods: {
     setReady() {
-      this.stomp.subscribe("/user/game/sudoku/start", tick => {
-        let response = JSON.parse(tick.body);
-        if (response.ready) {
-          this.$api
-            .get("/game/sudoku", { params: { gameId: this.gameId } })
-            .then(response => {
-              this.grid = response.data;
-            });
+      this.$socketManager.stompClient.subscribe(
+        "/user/game/sudoku/start",
+        tick => {
+          let response = JSON.parse(tick.body);
+          if (response.ready) {
+            this.$api
+              .get("/game/sudoku", { params: { gameId: this.gameId } })
+              .then(response => {
+                this.grid = response.data;
+              });
+          }
         }
-      });
+      );
       setTimeout(() => {
-        this.stomp.send("/app/game/sudoku/ready", {}, JSON.stringify({}));
+        this.$socketManager.stompClient.send(
+          "/app/game/sudoku/ready",
+          {},
+          JSON.stringify({})
+        );
       }, 500);
     }
   }

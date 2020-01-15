@@ -6,16 +6,13 @@
     <div v-else>
       <h3>You are currently in queue for a sudoku game</h3>
       <span v-if="!gameDetails">Finding game</span>
-      <span v-else>GAME FOUND, WARPING IN 5 seconds</span>
+      <span v-else>GAME FOUND, WARPING IN 1 SECOND</span>
     </div>
   </div>
 </template>
 
 <script>
-import { socketMixin } from "../../components/mixins/socket.mixin";
-
 export default {
-  mixins: [socketMixin],
   data() {
     return {
       connected: false,
@@ -25,36 +22,31 @@ export default {
     };
   },
   components: {},
-  methods: {
-    // queue(gameType) {
-    //   if (this.stompClient && this.stompClient.connected) {
-    //     const msg = { gameType };
-    //     this.stompClient.send("/app/game/queue/start", {}, JSON.stringify(msg));
-    //   }
-    // }
-  },
+  methods: {},
   mounted() {
-    // this.connect(stompClient => {
-      // this.connected = true;
-      // stompClient.subscribe("/user/game/queue/status", tick => {
-      //   const gameDetails = JSON.parse(tick.body);
-      //   this.gameDetails = gameDetails;
-      //   setTimeout(() => {
-      //     this.$router.push({
-      //       name: "game-play-gameId",
-      //       params: {
-      //         gameId: this.gameDetails.gameId,
-      //         stomp: stompClient
-      //       }
-      //     });
-      //   }, 5000);
-      // });
-      // setTimeout(() => {
-      //   var gameType = "quickplay";
-      //   const msg = { gameType };
-      //   this.stompClient.send("/app/game/queue/start", {}, JSON.stringify(msg));
-      // }, 1500);
-    // });
+    this.$socketManager.connect();
+
+    this.$socketManager.registerConnect(stompClient => {
+      this.connected = true;
+      stompClient.subscribe("/user/game/queue/status", tick => {
+        const gameDetails = JSON.parse(tick.body);
+        this.gameDetails = gameDetails;
+        setTimeout(() => {
+          this.$router.push({
+            name: "game-play-gameId",
+            params: {
+              gameId: this.gameDetails.gameId
+            }
+          });
+        }, 1000);
+      });
+
+      setTimeout(() => {
+        var gameType = "quickplay";
+        const msg = { gameType };
+        stompClient.send("/app/game/queue/start", {}, JSON.stringify(msg));
+      }, 1500);
+    });
   }
 };
 </script>
