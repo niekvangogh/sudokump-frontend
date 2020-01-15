@@ -1,6 +1,5 @@
 <template>
-  <div>
-    <div>{{gameId}}</div>
+  <div class="d-flex justify-content-center mt-5">
     <sudoku v-if="grid" :grid="grid" />
   </div>
 </template>
@@ -19,7 +18,10 @@ export default {
     };
   },
   mounted() {
-    // if (this.$socketManager.connected) {
+    // if (
+    //   this.$socketManager.stompClient &&
+    //   this.$socketManager.stompClient.connected
+    // ) {
       this.setReady();
     // } else {
     //   this.$socketManager.connect(stompClient => {

@@ -23,7 +23,9 @@
           :key="x"
           :x="x - 1"
           :y="((boxIndex - 1) * squirt) + (tileRowIndex -1)"
-          :value="$sudokuManager.grid[x - 1][((boxIndex - 1) * squirt) + (tileRowIndex -1)]"
+          :value="$sudokuManager.grid[x - 1][((boxIndex - 1) * squirt) + (tileRowIndex -1)].value"
+          :solution="$sudokuManager.grid[x - 1][((boxIndex - 1) * squirt) + (tileRowIndex -1)].solution"
+          :guesses="$sudokuManager.grid[x - 1][((boxIndex - 1) * squirt) + (tileRowIndex -1)].guesses"
         />
       </tr>
     </tbody>
@@ -52,7 +54,7 @@ export default {
     document.addEventListener("keydown", event => {
       const key = event.key;
       if (parseInt(key) && this.selected) {
-        this.$sudokuManager.grid[this.selected.x][this.selected.y] = key;
+        this.$sudokuManager.grid[this.selected.x][this.selected.y].value = key;
         this.$forceUpdate();
 
         this.selected.element.classList.remove("selected");
@@ -67,6 +69,12 @@ export default {
       }
       this.selected = payload;
       this.selected.element.classList.add("selected");
+    }
+  },
+  watch: {
+    grid: function(to) {
+      this.$sudokuManager.grid = this.grid;
+      this.$forceUpdate();
     }
   }
 };
