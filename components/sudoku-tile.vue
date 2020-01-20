@@ -71,7 +71,6 @@ export default {
       width: 33.3333%;
       height: 33.3333%;
       display: inline-block;
-      color: #aaa;
       font-size: 10px;
       line-height: 15px;
     }
@@ -87,7 +86,7 @@ export default {
   }
 
   &.selected {
-    background: green;
+    background: chocolate;
   }
 }
 </style>

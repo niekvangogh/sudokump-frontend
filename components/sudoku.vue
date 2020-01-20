@@ -56,8 +56,7 @@ export default {
 
       let keyChar = String.fromCharCode(key);
 
-      console.log(keyChar, key);
-      if (this.selected && parseInt(keyChar) !== NaN) {
+      if (this.selected && (parseInt(keyChar) || keyChar == 0)) {
         keyChar = parseInt(keyChar);
 
         const point = this.grid[this.selected.x][this.selected.y];
@@ -76,11 +75,10 @@ export default {
               var solutions = point.potentialSolutions;
               if (!solutions.includes(keyChar)) {
                 solutions.push(keyChar);
-                this.$emit("addPotentialGuess", payload);
+                this.$emit("addPotentialTile", payload);
               } else {
                 solutions.splice(solutions.indexOf(keyChar), 1);
-
-                this.$emit("removePotentialGuess", payload);
+                this.$emit("removePotentialTile", payload);
               }
           }
         } else {
@@ -93,15 +91,17 @@ export default {
         }
       }
     };
-    document.addEventListener("keydown", onkeydown);
+      document.addEventListener("keydown", onkeydown);
+    
   },
   methods: {
     setSelected(payload) {
-      if (this.selected) {
-        this.selected.element.classList.remove("selected");
-      }
-      this.selected = payload;
-      this.selected.element.classList.add("selected");
+        if (this.selected) {
+          this.selected.element.classList.remove("selected");
+        }
+        this.selected = payload;
+        this.selected.element.classList.add("selected");
+      
     }
   },
   computed: {
