@@ -1,5 +1,17 @@
 <template>
-  <td class="sudoku__tile" :style="tileStyle" @click="select">{{getTileDisplay(tileData)}}</td>
+  <td class="tile" :style="tileStyle" @click="select">
+    <div
+      class="tile__value"
+      v-if="!(tileData.solution == 0 && tileData.guess == 0)"
+    >{{getTileDisplay(tileData)}}</div>
+    <div class="tile__hint-container" v-else>
+      <div
+        class="tile__hint"
+        v-for="(number, index) in tileData.potentialSolutions"
+        :key="index"
+      >{{number}}</div>
+    </div>
+  </td>
 </template>
 
 <script>
@@ -38,16 +50,40 @@ export default {
 };
 </script>
 <style lang="scss">
-td.sudoku__tile {
+.tile {
+  position: relative;
   border: solid thin black;
   height: 50px;
   width: 50px;
-  text-align: center;
   padding: 0;
+  text-align: center;
 
-  .value {
-    margin: auto;
-    display: block;
+  &__hint-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 0;
+    line-height: 0;
+
+    .tile__hint {
+      width: 33.3333%;
+      height: 33.3333%;
+      display: inline-block;
+      color: #aaa;
+      font-size: 10px;
+      line-height: 15px;
+    }
+  }
+
+  &__value {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    line-height: 50px;
   }
 
   &.selected {

@@ -43,29 +43,57 @@ export default {
   },
   computed: {},
   mounted() {
-    var map = {}; // You could also use an array
-    onkeydown = onkeyup = function(e) {
-      e = e || event; // to deal with IE
-      map[e.keyCode] = e.type == "keydown";
-      if(map[16]) {}
-    };
-    document.addEventListener("keydown", event => {
-      const key = event.key;
-      if (parseInt(key) && this.selected) {
-        this.grid[this.selected.x][this.selected.y].guess = key;
+    var onkeydown = ev => {
+      var key;
+      var isShift;
+      if (window.event) {
+        key = window.event.keyCode;
+        isShift = !!window.event.shiftKey;
+      } else {
+        key = ev.which;
+        isShift = !!ev.shiftKey;
+      }
 
-        if (true) {
-          this.$emit("updateGuess", {
-            x: this.selected.x,
-            y: this.selected.y,
-            newValue: key
-          });
+      let keyChar = String.fromCharCode(key);
+
+      console.log(keyChar, key);
+      if (this.selected && parseInt(keyChar) !== NaN) {
+        keyChar = parseInt(keyChar);
+
+        const point = this.grid[this.selected.x][this.selected.y];
+
+        const payload = {
+          x: this.selected.x,
+          y: this.selected.y,
+          newValue: keyChar
+        };
+
+        if (isShift) {
+          switch (key) {
+            case 16: // ignore shift key
+              break;
+            default:
+              var solutions = point.potentialSolutions;
+              if (!solutions.includes(keyChar)) {
+                solutions.push(keyChar);
+                this.$emit("addPotentialGuess", payload);
+              } else {
+                solutions.splice(solutions.indexOf(keyChar), 1);
+
+                this.$emit("removePotentialGuess", payload);
+              }
+          }
+        } else {
+          point.guess = keyChar;
+          point.solutions = [];
+          this.$emit("updateGuess", payload);
 
           this.selected.element.classList.remove("selected");
           this.selected = null;
         }
       }
-    });
+    };
+    document.addEventListener("keydown", onkeydown);
   },
   methods: {
     setSelected(payload) {
@@ -83,8 +111,6 @@ export default {
   },
   watch: {
     grid: function(newValue) {
-      console.log(newValue);
-
       this.$forceUpdate();
     }
   }

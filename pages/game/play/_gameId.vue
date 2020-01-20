@@ -1,6 +1,11 @@
 <template>
   <div class="d-flex justify-content-center mt-5">
-    <sudoku v-if="grid" :grid="grid" @updateGuess="updateGuess" />
+    <sudoku
+      v-if="grid"
+      :grid="grid"
+      @updateGuess="updateGuess"
+      @updatePotentialGuess="updatePotentialGuess"
+    />
   </div>
 </template>
 
@@ -33,6 +38,17 @@ export default {
     updateGuess(payload) {
       this.$socketManager.stompClient.send(
         "/app/game/sudoku/setGuess",
+        JSON.stringify({
+          x: payload.x,
+          y: payload.y,
+          guess: payload.newValue
+        }),
+        {}
+      );
+    },
+    updatePotentialGuess(payload) {
+      this.$socketManager.stompClient.send(
+        "/app/game/sudoku/addPotentialTile",
         JSON.stringify({
           x: payload.x,
           y: payload.y,
