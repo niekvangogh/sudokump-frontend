@@ -53,6 +53,7 @@ export default {
           let data = response.data;
           if (data) {
             const accessToken = data.accessToken;
+            console.log(accessToken);
             this.$api.defaults.headers.common[
               "Authorization"
             ] = `Bearer ${accessToken}`;
@@ -60,10 +61,8 @@ export default {
             this.$api.get("/user/me").then(response => {
               const userProfile = response.data;
 
-              Cookie.set(
-                "auth",
-                JSON.stringify({ accessToken, user: userProfile })
-              );
+              Cookie.set("user", JSON.stringify(userProfile));
+              Cookie.set("accessToken", accessToken);
 
               this.$store.dispatch("setAuth", {
                 accessToken,

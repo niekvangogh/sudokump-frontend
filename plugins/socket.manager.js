@@ -21,6 +21,7 @@ export default function ({ store }, inject) {
 
     manager.connect = (callback) => {
         const accessToken = store.getters.accessToken;
+        console.log(accessToken)
 
         XMLHttpRequest.prototype.origOpen = XMLHttpRequest.prototype.open;
         XMLHttpRequest.prototype.open = function () {

@@ -50,7 +50,7 @@ export default {
     } else {
       this.$socketManager.connect(stompClient => {
         this.setReady();
-        this.requestSudoku();
+        // this.requestSudoku();
       });
     }
   },
@@ -93,10 +93,11 @@ export default {
         "/user/game/sudoku/start",
         tick => {
           let response = JSON.parse(tick.body);
-          console.log(tick.body);
           if (response.ready) {
-            this.requestSudoku();
             this.players = response.players;
+            setTimeout(() => {
+              this.requestSudoku();
+            }, 1000);
           }
         }
       );

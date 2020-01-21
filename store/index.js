@@ -23,7 +23,8 @@ export const actions = {
     if (req.headers.cookie) {
       const parsed = cookieparser.parse(req.headers.cookie)
       try {
-        auth = JSON.parse(parsed.auth);
+        auth.user = JSON.parse(parsed.user);
+        auth.accessToken = parsed.accessToken;
         dispatch('setAuth', auth);
       } catch (err) {
 

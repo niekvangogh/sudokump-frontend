@@ -1,6 +1,5 @@
 export default function ({ store, redirect }) {
-    if (store.state.accessToken) {
-      return redirect('/dashboard')
-    }
+  if (store.state.accessToken) {
+    return redirect('/dashboard')
   }
-  
+}
