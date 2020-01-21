@@ -4,13 +4,7 @@
       <b-col cols="9">
         <h2>You are currently playing against 3 opponents</h2>
         <div class="d-flex justify-content-center mt-5">
-          <sudoku
-            v-if="grid"
-            :grid="grid"
-            @updateGuess="updateGuess"
-            @addPotentialTile="addPotentialTile"
-            @removePotentialTile="removePotentialTile"
-          />
+          <sudoku v-if="grid" :grid="grid" @updateTile="updateTile" />
         </div>
       </b-col>
       <b-col cols="3">
@@ -20,7 +14,7 @@
             v-for="player in players"
             :key="player.id"
             :to="{ name: 'player-id', params: {id: player.id }}"
-          >{{player.username}} - {{player.ranking}}</b-list-group-item>
+          >{{player.username}} - {{player.rating}}</b-list-group-item>
         </b-list-group>
       </b-col>
     </b-row>
@@ -55,35 +49,14 @@ export default {
     }
   },
   methods: {
-    updateGuess(payload) {
+    updateTile(payload) {
       this.$socketManager.stompClient.send(
-        "/app/game/sudoku/setGuess",
+        "/app/game/sudoku/updateTile",
         JSON.stringify({
           x: payload.x,
           y: payload.y,
-          guess: payload.newValue
-        }),
-        {}
-      );
-    },
-    addPotentialTile(payload) {
-      this.$socketManager.stompClient.send(
-        "/app/game/sudoku/addPotentialTile",
-        JSON.stringify({
-          x: payload.x,
-          y: payload.y,
-          guess: payload.newValue
-        }),
-        {}
-      );
-    },
-    removePotentialTile(payload) {
-      this.$socketManager.stompClient.send(
-        "/app/game/sudoku/removePotentialTile",
-        JSON.stringify({
-          x: payload.x,
-          y: payload.y,
-          guess: payload.newValue
+          number: payload.newValue,
+          method: payload.method
         }),
         {}
       );
@@ -95,19 +68,31 @@ export default {
           let response = JSON.parse(tick.body);
           if (response.ready) {
             this.players = response.players;
-            setTimeout(() => {
-              this.requestSudoku();
-            }, 1000);
+            this.requestSudoku();
           }
         }
       );
-      setTimeout(() => {
-        this.$socketManager.stompClient.send(
-          "/app/game/sudoku/ready",
-          {},
-          JSON.stringify({})
-        );
-      }, 1000);
+
+      this.$socketManager.stompClient.subscribe(
+        "/user/game/sudoku/update",
+        tick => {
+          let response = JSON.parse(tick.body);
+          console.log(response);
+          switch (response.event) {
+            case "playerwin":
+              console.log("player won", response);
+              break;
+              case "playerdisconnect":
+                break;
+          }
+        }
+      );
+
+      this.$socketManager.stompClient.send(
+        "/app/game/sudoku/ready",
+        {},
+        JSON.stringify({})
+      );
     },
     requestSudoku() {
       this.$api

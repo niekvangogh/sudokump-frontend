@@ -75,33 +75,35 @@ export default {
               var solutions = point.potentialSolutions;
               if (!solutions.includes(keyChar)) {
                 solutions.push(keyChar);
-                this.$emit("addPotentialTile", payload);
+                payload.method = "addPotentialSolution";
+                this.$emit("updateTile", payload);
               } else {
                 solutions.splice(solutions.indexOf(keyChar), 1);
-                this.$emit("removePotentialTile", payload);
+                payload.method = "removePotentialSolution";
+                this.$emit("updateTile", payload);
               }
           }
         } else {
           point.guess = keyChar;
           point.solutions = [];
-          this.$emit("updateGuess", payload);
+
+          payload.method = "setGuess";
+          this.$emit("updateTile", payload);
 
           this.selected.element.classList.remove("selected");
           this.selected = null;
         }
       }
     };
-      document.addEventListener("keydown", onkeydown);
-    
+    document.addEventListener("keydown", onkeydown);
   },
   methods: {
     setSelected(payload) {
-        if (this.selected) {
-          this.selected.element.classList.remove("selected");
-        }
-        this.selected = payload;
-        this.selected.element.classList.add("selected");
-      
+      if (this.selected) {
+        this.selected.element.classList.remove("selected");
+      }
+      this.selected = payload;
+      this.selected.element.classList.add("selected");
     }
   },
   computed: {

@@ -14,7 +14,7 @@
               <br />
               <b-form-input type="password" v-model="password" required placeholder="Password"></b-form-input>
               <br />
-              <b-button type="submit" variant="primary">Login</b-button>
+              <b-button type="submit" variant="primary">Register</b-button>
             </b-form>
           </div>
         </article>

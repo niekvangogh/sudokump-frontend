@@ -5,7 +5,7 @@
         <div class="my-5">
           <h1>SudokuMP</h1>
           <div class="my-5">
-            <b-button variant="danger">Register</b-button>
+            <b-button variant="danger" :to="{name: 'register'}">Register</b-button>
             <b-button variant="success" :to="{name: 'login'}">Login</b-button>
           </div>
         </div>

@@ -1,0 +1,7 @@
+organization=niekvangogh
+projectKey=niekvangogh_sudokump-frontend
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.4183
+dashboardUrl=https://sonarcloud.io/dashboard?id=niekvangogh_sudokump-frontend
+ceTaskId=AW_KgPq_wCdr8tw8LKSV
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AW_KgPq_wCdr8tw8LKSV
