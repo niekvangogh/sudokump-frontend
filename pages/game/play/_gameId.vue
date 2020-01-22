@@ -2,13 +2,13 @@
   <div>
     <b-row>
       <b-col cols="9">
-        <h2>You are currently playing against 3 opponents</h2>
+        <h2>You are currently playing against 1 opponent</h2>
         <div class="d-flex justify-content-center mt-5">
           <sudoku v-if="grid" :grid="grid" @updateTile="updateTile" />
         </div>
       </b-col>
       <b-col cols="3">
-        <h5>Other players in the game:</h5>
+        <h5>Players in the game:</h5>
         <b-list-group>
           <b-list-group-item
             v-for="player in players"
@@ -44,7 +44,7 @@ export default {
     } else {
       this.$socketManager.connect(stompClient => {
         this.setReady();
-        // this.requestSudoku();
+        this.requestSudoku();
       });
     }
   },
@@ -68,7 +68,9 @@ export default {
           let response = JSON.parse(tick.body);
           if (response.ready) {
             this.players = response.players;
-            this.requestSudoku();
+            setTimeout(() => {
+              this.requestSudoku();
+            }, 1000);
           }
         }
       );
@@ -77,22 +79,24 @@ export default {
         "/user/game/sudoku/update",
         tick => {
           let response = JSON.parse(tick.body);
-          console.log(response);
           switch (response.event) {
             case "playerwin":
-              console.log("player won", response);
+              alert(`${response.winner.username} has won the game!`)
               break;
-              case "playerdisconnect":
-                break;
+            case "playerdisconnect":
+              alert(`${response.disconnectedUser.username} has disconnected`)
+              break;
           }
         }
       );
 
-      this.$socketManager.stompClient.send(
-        "/app/game/sudoku/ready",
-        {},
-        JSON.stringify({})
-      );
+      setTimeout(() => {
+        this.$socketManager.stompClient.send(
+          "/app/game/sudoku/ready",
+          {},
+          JSON.stringify({})
+        );
+      }, 1000);
     },
     requestSudoku() {
       this.$api
