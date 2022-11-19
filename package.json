@@ -18,7 +18,7 @@
     "js-cookie": "^2.2.1",
     "cookieparser": "0.1.0",
     "node-sass": "^4.13.0",
-    "nuxt": "^2.0.0",
+    "nuxt": "^2.15.8",
     "sass-loader": "^8.0.0",
     "sockjs-client": "^1.4.0",
     "vuex-persistedstate": "^2.7.0",
